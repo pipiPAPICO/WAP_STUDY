@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
     public Dongle lastDongle;
     public GameObject donglePrefab;
     public Transform dongleGroup;
-
+    public int maxLevel;
     private void Awake()
     {
         Application.targetFrameRate = 60;
@@ -26,7 +26,8 @@ public class GameManager : MonoBehaviour
     {
         Dongle newDongle = GetDongle();
         lastDongle = newDongle;
-        lastDongle.level = Random.Range(0, 8); // MAX값은 포함안됨
+        lastDongle.manager = this;
+        lastDongle.level = Random.Range(0, maxLevel); // MAX값은 포함안됨
         lastDongle.gameObject.SetActive(true);
         StartCoroutine("WaitNext"); // 함수 이름 그대로 or 문자열로
     }
