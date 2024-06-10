@@ -7,8 +7,13 @@ public class GameManager : MonoBehaviour
     public Dongle lastDongle;
     public GameObject donglePrefab;
     public Transform dongleGroup;
+    public List<Dongle> donglePool;
     public GameObject effectPrefab;
     public Transform effectGroup;
+    public List<ParticleSystem> effectPool;
+    [Range(1, 30)]
+    public int poolSize;
+    public int poolCursor;
 
     public AudioSource bgmPlayer;
     public AudioSource[] sfxPlayer;
@@ -23,23 +28,47 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Application.targetFrameRate = 60;
+
+        donglePool = new List<Dongle>();
+        effectPool = new List<ParticleSystem> ();
+        for(int index = 0; index < poolSize; index++)
+        {
+            MakeDongle();
+        }
     }
     void Start()
     {
         bgmPlayer.Play();
         NextDongle();
     }
-    Dongle GetDongle()
+
+    Dongle MakeDongle()
     {
         //이펙트 생성
         GameObject instantEffectObj = Instantiate(effectPrefab, effectGroup);
+        instantEffectObj.name = "Effect " + effectPool.Count;
         ParticleSystem instantEffect = instantEffectObj.GetComponent<ParticleSystem>();
+        effectPool.Add(instantEffect);
 
         //동글 생성
         GameObject instantDongleObj = Instantiate(donglePrefab, dongleGroup);
+        instantDongleObj.name = "Dongle " + donglePool.Count;
         Dongle instantDongle = instantDongleObj.GetComponent<Dongle>();
+        instantDongle.manager = this;
         instantDongle.effect = instantEffect;
-       return instantDongle;
+        donglePool.Add(instantDongle);
+
+        return instantDongle;
+    }
+    Dongle GetDongle()
+    {
+        for(int index = 0; index < donglePool.Count; index++ )
+        {
+            poolCursor = (poolCursor + 1) % donglePool.Count;
+            if (!donglePool[poolCursor].gameObject.activeSelf)
+                return donglePool[poolCursor];
+        }
+        return MakeDongle(); // 함수에 반환 값이 있으므로 함수 반환 가능
     }
     void NextDongle()
     {
@@ -47,9 +76,7 @@ public class GameManager : MonoBehaviour
         {
             return;
         }
-        Dongle newDongle = GetDongle();
-        lastDongle = newDongle;
-        lastDongle.manager = this;
+        lastDongle = GetDongle();
         lastDongle.level = Random.Range(0, maxLevel); // MAX값은 포함안됨
         lastDongle.gameObject.SetActive(true);
 

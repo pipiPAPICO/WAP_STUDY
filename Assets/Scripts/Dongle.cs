@@ -25,13 +25,30 @@ public class Dongle : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
         anim.SetInteger("Level", level);
     }
-    void Start()
+    void OnDisable()
     {
+        // 동글 속성 초기화
+        level = 0;
         isDrag = false;
+        isMerge = false;
+        isAttach = false;
+
+        // 동글 트랜스폼 초기화
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity; // vector3.zero 와 똑같은 값
+        transform.localScale = Vector3.zero;
+
+        // 동글 물리 초기화
+        rigid.simulated = false;
+        rigid.velocity = Vector2.zero;
+        rigid.angularVelocity = 0;
+        circle.enabled = true;
+
+
     }
     void Update()
     {
@@ -143,7 +160,7 @@ public class Dongle : MonoBehaviour
     {
         isMerge = true;
 
-        rigid.velocity = Vector2.zero; // vector2인 이유 : rigidbodyt2D 이기 때문에
+        rigid.velocity = Vector2.zero; // vector2인 이유 : rigidbody2D 이기 때문에
         rigid.angularVelocity = 0; // + 값이면 시계방향, - 값이면 반시계방향
 
         StartCoroutine(LevelUpRoutine());
