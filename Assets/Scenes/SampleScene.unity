@@ -285,8 +285,22 @@ MonoBehaviour:
   lastDongle: {fileID: 0}
   donglePrefab: {fileID: 2121322809823622469, guid: a3498a10a80f22a499dd608623e8d43f, type: 3}
   dongleGroup: {fileID: 502833239}
+  donglePool:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   effectPrefab: {fileID: 3740424817230927496, guid: 7c152f103948a0a45b2907c01271c8ad, type: 3}
   effectGroup: {fileID: 868690106}
+  effectPool:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  poolSize: 5
+  poolCursor: 0
   bgmPlayer: {fileID: 811142303}
   sfxPlayer:
   - {fileID: 1027092105}
@@ -541,7 +555,7 @@ Transform:
   m_GameObject: {fileID: 502833238}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
