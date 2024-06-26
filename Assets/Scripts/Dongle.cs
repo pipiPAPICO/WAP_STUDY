@@ -25,13 +25,30 @@ public class Dongle : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
         anim.SetInteger("Level", level);
     }
-    void Start()
+    void OnDisable()
     {
+        // 동글 속성 초기화
+        level = 0;
         isDrag = false;
+        isMerge = false;
+        isAttach = false;
+
+        // 동글 트랜스폼 초기화
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity; // vector3.zero 와 똑같은 값
+        transform.localScale = Vector3.zero;
+
+        // 동글 물리 초기화
+        rigid.simulated = false;
+        rigid.velocity = Vector2.zero;
+        rigid.angularVelocity = 0;
+        circle.enabled = true;
+
+
     }
     void Update()
     {
@@ -82,11 +99,11 @@ public class Dongle : MonoBehaviour
     }
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if(collision.gameObject.tag == "Dongle")
+        if (collision.gameObject.tag == "Dongle")
         {
             Dongle other = collision.gameObject.GetComponent<Dongle>();
 
-            if(level == other.level && !isMerge && !other.isMerge && level < 7)
+            if (level == other.level && !isMerge && !other.isMerge && level < 7)
             {// 나와 상대편 위치 가져오기
                 float meX = transform.position.x;
                 float meY = transform.position.y;
@@ -94,7 +111,7 @@ public class Dongle : MonoBehaviour
                 float otherY = other.transform.position.y; ;
                 // 1. 내가 아래에 있을 때
                 // 2. 동일한 높이, 내가 오른쪽
-                if(meY < otherY || (meY == otherY && meX > otherX))
+                if (meY < otherY || (meY == otherY && meX > otherX))
                 { // 상대방은 숨기기
                     other.Hide(transform.position);
                     LevelUp();
@@ -102,14 +119,14 @@ public class Dongle : MonoBehaviour
             }
         }
     }
-    public void Hide(Vector3 targetPos) 
+    public void Hide(Vector3 targetPos)
     {
         isMerge = true;
 
         rigid.simulated = false;
         circle.enabled = false;
 
-        if(targetPos == Vector3.up * 100)
+        if (targetPos == Vector3.up * 100)
         {
             EffectPlay();
         }
@@ -120,14 +137,14 @@ public class Dongle : MonoBehaviour
     {
         int frameCount = 0;
 
-        while(frameCount < 20)
+        while (frameCount < 20)
         {
             frameCount++;
             if ((targetPos != Vector3.up * 100))
             {
                 transform.position = Vector3.Lerp(transform.position, targetPos, 0.5f);
             }
-            else if(targetPos == Vector3.up * 100)
+            else if (targetPos == Vector3.up * 100)
             {
                 transform.localScale = Vector3.Lerp(transform.localScale, Vector3.zero, 0.2f);
             }
@@ -143,7 +160,7 @@ public class Dongle : MonoBehaviour
     {
         isMerge = true;
 
-        rigid.velocity = Vector2.zero; // vector2인 이유 : rigidbodyt2D 이기 때문에
+        rigid.velocity = Vector2.zero; // vector2인 이유 : rigidbody2D 이기 때문에
         rigid.angularVelocity = 0; // + 값이면 시계방향, - 값이면 반시계방향
 
         StartCoroutine(LevelUpRoutine());
@@ -166,15 +183,15 @@ public class Dongle : MonoBehaviour
 
     void OnTriggerStay2D(Collider2D collision)
     {
-        if(collision.tag == "Finish")
+        if (collision.tag == "Finish")
         {
             deadTime += Time.deltaTime;
 
-            if(deadTime > 2)
+            if (deadTime > 2)
             {
                 spriteRenderer.color = new Color(0.9f, 0.2f, 0.2f);
             }
-            if(deadTime > 5)
+            if (deadTime > 5)
             {
                 manager.GameOver();
             }
